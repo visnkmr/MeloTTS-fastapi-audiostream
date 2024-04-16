@@ -198,7 +198,6 @@ class TTS(nn.Module):
             
             language = self.language
             texts = self.split_sentences_into_pieces(text, language, quiet)
-            audio_list = []
             if pbar:
                 tx = pbar(texts)
             else:
@@ -236,12 +235,11 @@ class TTS(nn.Module):
                             length_scale=1. / speed,
                         )[0][0, 0].data.cpu().float().numpy()
                     del x_tst, tones, lang_ids, bert, ja_bert, x_tst_lengths, speakers
-                    # 
-                # audio = self.audio_numpy_concat(audio, sr=self.hps.data.sampling_rate, speed=speed)
-                # soundfile.write(f"./{t}.wav", audio, self.hps.data.sampling_rate, format=format)
-                # Save each piece of audio to a separate file
-                # Generate a unique filename for each piece of audio
                 audio_queue.put(audio)
+                # f = open(f"./audio_{i}.txt", "w")
+                # f.write(audio)
+                # f.close()
+                # np.savetxt(f"./audio_{i}.txt",audio)
             torch.cuda.empty_cache()
             audio_queue.put(None)
             audio_player.join()
